@@ -9,13 +9,13 @@ class Card:
         self.colour = colour
         self.value = value
 
-    def get_name(self):
+    def getName(self):
         return self.name
 
-    def get_value(self):
+    def getValue(self):
         return self.value
 
-    def get_colour(self):
+    def getColour(self):
         return {
             1: 'heart',
             2: 'diamond',
