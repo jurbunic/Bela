@@ -1,13 +1,17 @@
 package org.foi.jurbunic.bela.agents;
 
 import jade.core.Agent;
+import org.foi.jurbunic.bela.agents.behaviours.PlayerTurn;
+import org.foi.jurbunic.bela.agents.behaviours.Register;
 import org.foi.jurbunic.bela.cards.Card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Agent {
 
-    private List<Card> myCards;
+    private Integer playerId;
+    private List<Card> myCards = new ArrayList<>();
 
     public Player(){
 
@@ -15,10 +19,11 @@ public class Player extends Agent {
 
     @Override
     public void setup(){
-        System.out.println("My name is " + getName());
-        myCards = (List<Card>) getArguments()[0];
-        listMyCards();
-
+        playerId =  (Integer) this.getArguments()[0];
+        System.out.println("["+playerId+"]"+"My name is " + getName());
+        sleep();
+        addBehaviour(new Register(this));
+        addBehaviour(new PlayerTurn(this));
     }
 
     public void listMyCards(){
@@ -28,5 +33,29 @@ public class Player extends Agent {
         }
     }
 
+    public void setMyCards(List<Card> cards){
+        this.myCards = cards;
+    }
 
+    public Integer getPlayerId() {
+        return playerId;
+    }
+
+    public Integer getNumOfMyCards(){
+        return myCards.size();
+    }
+
+    @Override
+    protected void takeDown() {
+        System.out.println("Umirem" + getAID().getName());
+        super.takeDown();
+    }
+
+    private void sleep(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
