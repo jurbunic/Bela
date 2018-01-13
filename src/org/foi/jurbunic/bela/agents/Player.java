@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Player extends Agent {
 
+    private Integer status = 0;
     private Integer playerId;
     private List<Card> myCards = new ArrayList<>();
 
@@ -43,6 +44,14 @@ public class Player extends Agent {
 
     public Integer getNumOfMyCards(){
         return myCards.size();
+    }
+
+    public Integer getStatus(){
+        return status;
+    }
+
+    public void setStatus(Integer status){
+        this.status = status;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.foi.jurbunic.bela;
 
+import jade.core.AID;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.BelaDeck;
 import org.foi.jurbunic.bela.cards.Deck;
@@ -31,7 +32,14 @@ public class Game {
         deck.splitEvenly(players.size());
         deck.shuffle();
         for(int i=0;i<players.size();i++){
-            players.get(i).setMyCards(deck.deal());
+            try{
+                players.get(i).setMyCards(deck.deal());
+                if(playerOnTurn==i)
+                    players.get(i).setStatus(2);
+            }catch (Exception e){
+                System.out.println("Debug");
+            }
+
         }
     }
 
@@ -47,10 +55,12 @@ public class Game {
         return playerOnTurn;
     }
 
-    public void nextTurn(){
-        playerOnTurn++;
-        if(playerOnTurn>3){
-            playerOnTurn=0;
+
+    public AID getNextPlayer(Integer myId){
+        Integer nextPlayer = myId+1;
+        if(nextPlayer>3){
+            nextPlayer = 0;
         }
+        return players.get(nextPlayer).getAID();
     }
 }

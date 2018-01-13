@@ -25,6 +25,7 @@ public class MainClass {
             Player p = new Player();
             p.setArguments(new Object[]{i});
             agentControllers.add(startAgent(container, p));
+            sleep();
         }
     }
 
@@ -54,5 +55,13 @@ public class MainClass {
         profile.setParameter(Profile.CONTAINER_NAME, "Belot");
         ContainerController cc = runtime.createAgentContainer(profile);
         return cc;
+    }
+
+    private static void sleep(){
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
