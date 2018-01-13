@@ -5,6 +5,9 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import org.foi.jurbunic.bela.Game;
 import org.foi.jurbunic.bela.agents.Player;
+import org.foi.jurbunic.bela.cards.CardAlgorithm;
+import org.foi.jurbunic.bela.cards.Colour;
+import org.foi.jurbunic.bela.cards.TrumpAlgorithm;
 
 public class PlayerTurn extends CyclicBehaviour {
 
@@ -37,7 +40,11 @@ public class PlayerTurn extends CyclicBehaviour {
                 break;
             //I call trump
             case 1:
-                System.out.println("Zovem nekaj!");
+                CardAlgorithm algorithm = new TrumpAlgorithm(player.getMyCards());
+                Colour colour = algorithm.bestAction().getColour();
+                colour.setTrump(true);
+                System.out.println("Zovem: "+colour.getColourName());
+                player.setStatus(2);
                 break;
             //My turn
             case 2:

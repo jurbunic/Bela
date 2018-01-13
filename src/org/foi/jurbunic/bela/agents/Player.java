@@ -50,6 +50,10 @@ public class Player extends Agent {
         return status;
     }
 
+    public List<Card> getMyCards() {
+        return myCards;
+    }
+
     public void setStatus(Integer status){
         this.status = status;
     }

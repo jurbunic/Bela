@@ -16,14 +16,14 @@ public class BelaDeck implements Deck{
     private void initCards(){
         // i < 4 because there is 4 colours
         for (int i=0;i<4;i++){
-            cards.add(new Card("Seven", i, 0));
-            cards.add(new Card("Eight", i, 0));
-            cards.add(new Card("Nine", i, 0));
-            cards.add(new Card("Ten", i, 10));
-            cards.add(new Card("Jack", i, 2));
-            cards.add(new Card("Dame", i, 3));
-            cards.add(new Card("King", i, 4));
-            cards.add(new Card("Ace", i, 11));
+            cards.add(new Card("Seven", Colour.getColour(i), 0));
+            cards.add(new Card("Eight", Colour.getColour(i), 0));
+            cards.add(new Card("Nine", Colour.getColour(i), 0));
+            cards.add(new Card("Ten", Colour.getColour(i), 10));
+            cards.add(new Card("Jack", Colour.getColour(i), 2));
+            cards.add(new Card("Dame", Colour.getColour(i), 3));
+            cards.add(new Card("King", Colour.getColour(i), 4));
+            cards.add(new Card("Ace", Colour.getColour(i), 11));
         }
     }
     @Override

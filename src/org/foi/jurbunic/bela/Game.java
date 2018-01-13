@@ -48,6 +48,7 @@ public class Game {
         int playerSize = players.size();
         if(players.size()>=4){
             dealCards();
+            players.get(0).setStatus(1);
         }
     }
 
