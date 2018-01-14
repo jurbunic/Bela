@@ -2,23 +2,17 @@ package org.foi.jurbunic.bela.agents.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 import org.foi.jurbunic.bela.Game;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.*;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerTurn extends CyclicBehaviour {
 
     private Player player;
     private Game game = Game.getInstance();
-    private List<Card> cardsInPlay = new ArrayList<>();
     private int firstStart = 0;
+    private Hand hand = new Hand();
 
     public PlayerTurn(Agent a) {
         super(a);
@@ -39,37 +33,8 @@ public class PlayerTurn extends CyclicBehaviour {
         switch (player.getStatus()){
             //Waiting for turn
             case 0:
-                while(player.getStatus()==0){
-                    ACLMessage message = player.receive();
-                    if(message != null){
-                        try {
-                            cardsInPlay = (List<Card>) message.getContentObject();
-                            //cardsInPlay.add((Card) message.getContentObject());
-                        } catch (UnreadableException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("Agent["+player.getPlayerId()+"]----------");
-                        System.out.println("Odigrano---------");
-                        for(int i=0;i<cardsInPlay.size();i++){
-                            if(cardsInPlay.size()==0) break;
-                            Card cardOut = cardsInPlay.get(i);
-                            if(cardOut == null) continue;
-                            try {
-                                System.out.print((player.getPlayerId() - 1) + cardOut.getName() + "-" + cardOut.getColourName() + ", ");
-                            }catch (Exception e){
-                                System.out.println("");
-                            }
-                        }
-                        System.out.println();
-                        if(cardsInPlay.size() >= 4){
-                            cardsInPlay = new ArrayList<>();
-                        }
-                        System.out.println("-----------------");
-
-
-                        player.setStatus(2);
-
-                    }
+                while (player.getStatus()==0) {
+                    sleep();
                 }
                 break;
             //I call trump
@@ -87,27 +52,23 @@ public class PlayerTurn extends CyclicBehaviour {
                     player.setStatus(3);
                     return;
                 }
+                hand = game.getHand();
                 algorithm = new NextCardAlgoritm(player.getMyCards());
-                algorithm.setCars(cardsInPlay);
-                ACLMessage sendMessage = new ACLMessage(ACLMessage.INFORM);
-                sendMessage.addReceiver(game.getNextPlayer(player.getPlayerId()));
+                algorithm.setCars(hand.getCardsInPlay());
                 Card card = algorithm.bestAction();
-                cardsInPlay.add(card);
-                try {
-                    sendMessage.setContentObject((Serializable) cardsInPlay);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                player.send(sendMessage);
+                game.playInHand(player, card);
+                System.out.println("["+player.getPlayerId()+"] Odigrao sam: "+ card.getName()+"-"+card.getColourName());
                 player.getMyCards().remove(card);
                 player.setStatus(0);
-
+                game.setNextPlayer(player.getPlayerId());
                 sleep();
                 break;
             case 3:
                 System.out.println("["+player.getPlayerId()+"] Nemam vise karta");
                 player.doDelete();
                 break;
+            default:
+                player.setStatus(0);
         }
     }
 

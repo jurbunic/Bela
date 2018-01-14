@@ -2,18 +2,18 @@ package org.foi.jurbunic.bela;
 
 import jade.core.AID;
 import org.foi.jurbunic.bela.agents.Player;
-import org.foi.jurbunic.bela.cards.BelaDeck;
-import org.foi.jurbunic.bela.cards.Colour;
-import org.foi.jurbunic.bela.cards.Deck;
+import org.foi.jurbunic.bela.cards.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Game {
+public class Game implements Serializable{
 
     private static List<Player> players = new ArrayList<>();
     private static Game INSTANCE;
     private static Deck deck;
+    private Hand hand = new Hand();
 
     private static Integer playerOnTurn = 0;
 
@@ -68,5 +68,32 @@ public class Game {
             nextPlayer = 0;
         }
         return players.get(nextPlayer).getAID();
+    }
+
+    public void setNextPlayer(Integer myId){
+        Integer nextPlayer = myId+1;
+        if(nextPlayer>3){
+            nextPlayer = 0;
+        }
+        if(hand.isWinnerDecided()){
+            for(Player player : players){
+                if( player.getPlayerId() == hand.getWinnerId()){
+                    System.out.println("Winner: ["+player.getPlayerId()+"]");
+                    player.setStatus(2);
+                    hand = new Hand();
+                    return;
+                }
+            }
+        }
+        players.get(nextPlayer).setStatus(2);
+    }
+
+
+    public synchronized void playInHand(Player player, Card card){
+        hand.addCard(player, card);
+    }
+
+    public Hand getHand(){
+        return hand;
     }
 }

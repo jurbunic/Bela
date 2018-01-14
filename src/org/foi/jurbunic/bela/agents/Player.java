@@ -4,6 +4,7 @@ import jade.core.Agent;
 import org.foi.jurbunic.bela.agents.behaviours.PlayerTurn;
 import org.foi.jurbunic.bela.agents.behaviours.Register;
 import org.foi.jurbunic.bela.cards.Card;
+import org.foi.jurbunic.bela.cards.Hand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class Player extends Agent {
     private Integer status = 0;
     private Integer playerId;
     private List<Card> myCards = new ArrayList<>();
+    private List<Hand> hands = new ArrayList<>();
 
     public Player(){
 
@@ -56,6 +58,14 @@ public class Player extends Agent {
 
     public void setStatus(Integer status){
         this.status = status;
+    }
+
+    public void addHand(Hand hand){
+        hands.add(hand);
+    }
+
+    public List<Hand> getHands() {
+        return hands;
     }
 
     @Override
