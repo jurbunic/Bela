@@ -3,6 +3,7 @@ package org.foi.jurbunic.bela;
 import jade.core.AID;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.BelaDeck;
+import org.foi.jurbunic.bela.cards.Colour;
 import org.foi.jurbunic.bela.cards.Deck;
 
 import java.util.ArrayList;
@@ -14,8 +15,9 @@ public class Game {
     private static Game INSTANCE;
     private static Deck deck;
 
-    private static Integer playerOnCall = 0;
     private static Integer playerOnTurn = 0;
+
+    private static Colour trump;
 
     private Game() {
         deck = new BelaDeck();
@@ -52,10 +54,13 @@ public class Game {
         }
     }
 
-    public int getPlayerOnTurn(){
-        return playerOnTurn;
+    public Colour getTrumpColour(){
+        return trump;
     }
 
+    public void setTrump(Colour trump){
+        Game.trump = trump;
+    }
 
     public AID getNextPlayer(Integer myId){
         Integer nextPlayer = myId+1;

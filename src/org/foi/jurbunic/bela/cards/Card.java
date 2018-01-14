@@ -1,12 +1,15 @@
 package org.foi.jurbunic.bela.cards;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
 
     private String name;
     private Colour colour;
-    private Integer value;
+    private int value;
+    private boolean isPlayed;
 
-    public Card(String name, Colour colour, Integer value) {
+    public Card(String name, Colour colour, int value) {
         this.name = name;
         this.colour = colour;
         this.value = value;
@@ -24,7 +27,15 @@ public class Card {
     public String getColourName(){
         return colour.getColourName();
     }
-    public Integer getValue() {
+    public int getValue() {
         return value;
+    }
+
+    public boolean isPlayed() {
+        return isPlayed;
+    }
+
+    public void setPlayed(boolean played) {
+        isPlayed = played;
     }
 }

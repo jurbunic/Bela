@@ -1,6 +1,8 @@
 package org.foi.jurbunic.bela.cards;
 
-public class Colour {
+import java.io.Serializable;
+
+public class Colour implements Serializable {
     private static final int DIAMOND = 0;
     private static final int HEART = 1;
     private static final int CLUB = 2;
