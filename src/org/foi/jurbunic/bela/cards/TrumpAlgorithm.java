@@ -21,9 +21,7 @@ public class TrumpAlgorithm extends CardOperation implements CardAlgorithm{
     }
 
     private Card findBest(){
-        for (Card card : myCards){
-            splitCardsByColour(card);
-        }
+        splitCardsByColour(myCards);
         Integer bestColour = calculateBestColour();
         switch (bestColour){
             case 0:
@@ -42,25 +40,36 @@ public class TrumpAlgorithm extends CardOperation implements CardAlgorithm{
         Integer currentBest;
         Integer colourSum;
         
-        currentBest = diamond.stream().mapToInt(Card::getValue).sum();
+        currentBest = (int) diamond.stream().mapToDouble(Card::getValue).sum() + containsJackOrNine(diamond);
         bestColour = 0;
-        colourSum = heart.stream().mapToInt(Card::getValue).sum();
+        colourSum = (int) heart.stream().mapToDouble(Card::getValue).sum();
 
         if (currentBest<= colourSum){
             currentBest = colourSum;
             bestColour = 1;
         }
-        colourSum = club.stream().mapToInt(Card::getValue).sum();
+        colourSum = (int) club.stream().mapToDouble(Card::getValue).sum();
         if (currentBest <= colourSum){
             currentBest = colourSum;
             bestColour = 2;
         }
-        colourSum = spade.stream().mapToInt(Card::getValue).sum();
+        colourSum = (int) spade.stream().mapToDouble(Card::getValue).sum();
         if (currentBest <= colourSum){
             currentBest = colourSum;
             bestColour = 3;
         }
         return bestColour;
+    }
+
+    private int containsJackOrNine(List<Card> trump) {
+        int bonus = 0;
+        if(trump.stream().anyMatch(card -> card.getName().equals("Jack"))){
+            bonus += 5;
+            if(trump.stream().anyMatch(card -> card.getName().equals("Nine"))){
+                bonus += 10;
+            }
+        }
+        return bonus;
     }
 
 }

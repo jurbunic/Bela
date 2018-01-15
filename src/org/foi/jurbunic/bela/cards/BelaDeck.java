@@ -16,14 +16,14 @@ public class BelaDeck implements Deck{
     private void initCards(){
         // i < 4 because there is 4 colours
         for (int i=0;i<4;i++){
-            cards.add(new Card("Seven", Colour.getColour(i), 0));
-            cards.add(new Card("Eight", Colour.getColour(i), 0));
-            cards.add(new Card("Nine", Colour.getColour(i), 0));
-            cards.add(new Card("Ten", Colour.getColour(i), 10));
-            cards.add(new Card("Jack", Colour.getColour(i), 2));
-            cards.add(new Card("Dame", Colour.getColour(i), 3));
-            cards.add(new Card("King", Colour.getColour(i), 4));
-            cards.add(new Card("Ace", Colour.getColour(i), 11));
+            cards.add(new Card("Seven","7", Colour.getColour(i), 0.1d));
+            cards.add(new Card("Eight","8", Colour.getColour(i), 0.2d));
+            cards.add(new Card("Nine","9", Colour.getColour(i), 0.3d));
+            cards.add(new Card("Ten","10", Colour.getColour(i), 10d));
+            cards.add(new Card("Jack","J", Colour.getColour(i), 2d));
+            cards.add(new Card("Dame","D", Colour.getColour(i), 3d));
+            cards.add(new Card("King","K", Colour.getColour(i), 4d));
+            cards.add(new Card("Ace","A", Colour.getColour(i), 11d));
         }
     }
     @Override
@@ -46,7 +46,7 @@ public class BelaDeck implements Deck{
     public List<Card> deal() {
         List<Card> playerDeck = new ArrayList<>();
         if(lastIndex >= cards.size()){
-            return null;
+            lastIndex = 0;
         }
         for(int i=lastIndex;i<(lastIndex+EVEN);i++){
             playerDeck.add(cards.get(i));

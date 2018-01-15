@@ -5,12 +5,13 @@ import java.io.Serializable;
 public class Card implements Serializable {
 
     private String name;
+    private String shortName;
     private Colour colour;
-    private int value;
-    private boolean isPlayed;
+    private double value;
 
-    public Card(String name, Colour colour, int value) {
+    public Card(String name, String shortName, Colour colour, double value) {
         this.name = name;
+        this.shortName = shortName;
         this.colour = colour;
         this.value = value;
     }
@@ -27,15 +28,24 @@ public class Card implements Serializable {
     public String getColourName(){
         return colour.getColourName();
     }
-    public int getValue() {
+    public double getValue() {
+        if(this.getColour().isTrump()){
+            if(this.getName().equals("Jack")){
+                return 20;
+            }
+            if(this.getName().equals("Nine")){
+                return 14;
+            }
+        }
         return value;
     }
 
-    public boolean isPlayed() {
-        return isPlayed;
+    public String getShortName() {
+        return shortName;
     }
 
-    public void setPlayed(boolean played) {
-        isPlayed = played;
+    public String getCardGraphic(){
+
+        return "|"+getShortName()+getColour().getColourSymbol()+"| ";
     }
 }

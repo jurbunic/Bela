@@ -10,6 +10,7 @@ public class Colour implements Serializable {
 
     private int colourId;
     private String colourName;
+    private String colourSymbol;
     private boolean trump;
 
     private static Colour diamond = new Colour(DIAMOND);
@@ -56,16 +57,24 @@ public class Colour implements Serializable {
         switch (colourName){
             case DIAMOND:
                 this.colourName = "Diamond";
+                this.colourSymbol = "◆";
                 break;
             case HEART:
                 this.colourName = "Heart";
+                this.colourSymbol = "❤";
                 break;
             case CLUB:
                 this.colourName = "Club";
+                this.colourSymbol = "♣";
                 break;
             case SPADE:
                 this.colourName = "Spade";
+                this.colourSymbol = "♠";
                 break;
         }
+    }
+
+    public String getColourSymbol() {
+        return colourSymbol;
     }
 }

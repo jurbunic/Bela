@@ -1,16 +1,17 @@
 package org.foi.jurbunic.bela;
 
-import jade.core.AID;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Game implements Serializable{
 
     private static List<Player> players = new ArrayList<>();
+    private List<Player> playersWaitList = new ArrayList<>();
     private static Game INSTANCE;
     private static Deck deck;
     private Hand hand = new Hand();
@@ -38,6 +39,7 @@ public class Game implements Serializable{
                 players.get(i).setMyCards(deck.deal());
                 if(playerOnTurn==i)
                     players.get(i).setStatus(2);
+                else players.get(i).setStatus(0);
             }catch (Exception e){
                 System.out.println("Debug");
             }
@@ -62,13 +64,6 @@ public class Game implements Serializable{
         Game.trump = trump;
     }
 
-    public AID getNextPlayer(Integer myId){
-        Integer nextPlayer = myId+1;
-        if(nextPlayer>3){
-            nextPlayer = 0;
-        }
-        return players.get(nextPlayer).getAID();
-    }
 
     public void setNextPlayer(Integer myId){
         Integer nextPlayer = myId+1;
@@ -95,5 +90,34 @@ public class Game implements Serializable{
 
     public Hand getHand(){
         return hand;
+    }
+
+    public void waitNewGame(Player p){
+        playersWaitList.add(p);
+        if(playersWaitList.size()==4){
+            while (true) {
+                System.out.print("New round? (y/n) >");
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.next();
+                if (input.equals("y")) {
+                    playerOnTurn++;
+                    dealCards();
+                    playersWaitList.clear();
+                    break;
+                }
+                if (input.equals("n")) {
+                    for(Player player : playersWaitList){
+                        player.setStatus(4);
+                    }
+                    try {
+                        Thread.sleep(5000);
+                        System.exit(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
     }
 }

@@ -17,22 +17,24 @@ public abstract class CardOperation implements CardAlgorithm{
         diamond.clear();heart.clear();club.clear();spade.clear();
     }
 
-    protected void splitCardsByColour(Card card){
-        Integer colour = card.getColour().getColourId();
-        switch (colour){
-            case 0:
-                diamond.add(card);
-                break;
-            case 1:
-                heart.add(card);
-                break;
-            case 2:
-                club.add(card);
-                break;
-            case 3:
-                spade.add(card);
-                break;
-        }
+    protected void splitCardsByColour(List<Card> cards){
+        for(Card card : cards){
+            Integer colour = card.getColour().getColourId();
+            switch (colour){
+                case 0:
+                    diamond.add(card);
+                    break;
+                case 1:
+                    heart.add(card);
+                    break;
+                case 2:
+                    club.add(card);
+                    break;
+                case 3:
+                    spade.add(card);
+                    break;
+                }
+            }
     }
 
     protected List<Card> filterByColour(int colour){

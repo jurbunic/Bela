@@ -1,6 +1,8 @@
 package org.foi.jurbunic.bela.agents;
 
+import jade.content.onto.annotations.SuppressSlot;
 import jade.core.Agent;
+import jade.wrapper.StaleProxyException;
 import org.foi.jurbunic.bela.agents.behaviours.PlayerTurn;
 import org.foi.jurbunic.bela.agents.behaviours.Register;
 import org.foi.jurbunic.bela.cards.Card;
@@ -68,6 +70,7 @@ public class Player extends Agent {
         return hands;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void takeDown() {
         System.out.println("Umirem" + getAID().getName());

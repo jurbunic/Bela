@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class Hand implements Serializable {
 
+    private static int handNumber = 1;
     private boolean winnerDecided = false;
     private int winnerId;
     private HashMap<Player,Card> cardsInPlay = new HashMap<>();
@@ -23,6 +24,7 @@ public class Hand implements Serializable {
         if(cardsInPlay.size()==4){
             decideWinner();
             cardsInPlay = new HashMap<>();
+            handNumber++;
         }
     }
 
@@ -75,5 +77,9 @@ public class Hand implements Serializable {
 
     public int getWinnerId() {
         return winnerId;
+    }
+
+    public int getHandNumber() {
+        return handNumber;
     }
 }
