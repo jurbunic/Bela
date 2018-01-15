@@ -42,18 +42,18 @@ public class TrumpAlgorithm extends CardOperation implements CardAlgorithm{
         
         currentBest = (int) diamond.stream().mapToDouble(Card::getValue).sum() + containsJackOrNine(diamond);
         bestColour = 0;
-        colourSum = (int) heart.stream().mapToDouble(Card::getValue).sum();
+        colourSum = (int) heart.stream().mapToDouble(Card::getValue).sum() + containsJackOrNine(heart);
 
         if (currentBest<= colourSum){
             currentBest = colourSum;
             bestColour = 1;
         }
-        colourSum = (int) club.stream().mapToDouble(Card::getValue).sum();
+        colourSum = (int) club.stream().mapToDouble(Card::getValue).sum() + containsJackOrNine(club);
         if (currentBest <= colourSum){
             currentBest = colourSum;
             bestColour = 2;
         }
-        colourSum = (int) spade.stream().mapToDouble(Card::getValue).sum();
+        colourSum = (int) spade.stream().mapToDouble(Card::getValue).sum() + containsJackOrNine(spade);
         if (currentBest <= colourSum){
             currentBest = colourSum;
             bestColour = 3;
@@ -64,7 +64,7 @@ public class TrumpAlgorithm extends CardOperation implements CardAlgorithm{
     private int containsJackOrNine(List<Card> trump) {
         int bonus = 0;
         if(trump.stream().anyMatch(card -> card.getName().equals("Jack"))){
-            bonus += 5;
+            bonus += 3;
             if(trump.stream().anyMatch(card -> card.getName().equals("Nine"))){
                 bonus += 10;
             }

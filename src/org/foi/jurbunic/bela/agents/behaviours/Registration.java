@@ -5,11 +5,11 @@ import jade.core.behaviours.OneShotBehaviour;
 import org.foi.jurbunic.bela.Game;
 import org.foi.jurbunic.bela.agents.Player;
 
-public class Register extends OneShotBehaviour {
+public class Registration extends OneShotBehaviour {
     Game game = Game.getInstance();
     Player player;
 
-    public Register(Agent a) {
+    public Registration(Agent a) {
         super(a);
         this.player = (Player) a;
     }

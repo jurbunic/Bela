@@ -36,60 +36,18 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
     }
 
     private Card nextCardLogic(List<Card> cards){
-        int chance = 0;
-        boolean needUber = true;
-        boolean sliced = false;
         Card bestCard = null;
-        Card firstCard = null;
-        Card uber = null;
-        Colour colour = null;
+        Card firstCard;
+        Card uber;
+        Colour colour;
         if(cards.size()>0){
             firstCard = cards.get(0);
-            uber = firstCard;
             colour =firstCard.getColour();
             possibleCards = filterByColour(colour.getColourId());
             if(trumps.size()<1 && possibleCards.size()<1){
                 return myCards.stream().min(Comparator.comparingDouble(Card::getValue)).get();
             }
-            for(Card card : cards){
-                if(!card.getColour().isTrump() && !card.getColour().equals(colour))
-                    continue;
-                if(card.getColour().isTrump()){
-                    if(card.getColour().equals(colour)){
-                        Card finalUber2 = uber;
-                        if(finalUber2 == null){
-
-                        }else {
-                            if (trumps.stream().noneMatch(trump -> trump.getValue()>= finalUber2.getValue())){
-                                needUber=false;
-                            }
-                        }
-
-                    }else {
-                        sliced = true;
-                        if (trumps.stream().noneMatch(trump -> trump.getValue()>=card.getValue())){
-                            needUber = false;
-                            continue;
-                        }
-                    }
-
-                }
-                if(sliced && needUber){
-                    uber = card;
-                }
-                if(needUber){
-                    if(uber.getValue()<=card.getValue()) uber = card;
-                    if(possibleCards.size()>0) {
-                        Card finalUber1 = uber;
-                        if(possibleCards.stream().noneMatch(myCard -> myCard.getValue()>= finalUber1.getValue()))
-                            needUber = false;
-                    }
-                }
-                if(!needUber){
-                    uber = null;
-                }
-
-            }
+            uber = findUber(cards);
         }else {
             return choseCard();
         }
@@ -114,9 +72,6 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
                 Card finalUber = uber;
                 if(trumps.stream().min(Comparator.comparingDouble(Card::getValue)).isPresent())
                     bestCard = trumps.stream().min(Comparator.comparingDouble(Card::getValue)).get();
-                /*if(possible.size()>0){
-                    bestCard = possible.get(0);
-                }*/
             }else {
                 if(myCards.stream().min(Comparator.comparingDouble(Card::getValue)).isPresent())
                     bestCard = myCards.stream().min(Comparator.comparingDouble(Card::getValue)).get();
@@ -135,15 +90,15 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
         double riskClub = club.size() / 8d;
         double riskSpade = spade.size() / 8d;
 
-        calculateTrumpStartRisk(riskDiamon, diamond);
-        calculateTrumpStartRisk(riskHeart, heart);
-        calculateTrumpStartRisk(riskClub, club);
-        calculateTrumpStartRisk(riskSpade, spade);
+        riskDiamon = calculateTrumpStartRisk(riskDiamon, diamond);
+        riskHeart = calculateTrumpStartRisk(riskHeart, heart);
+        riskClub = calculateTrumpStartRisk(riskClub, club);
+        riskSpade = calculateTrumpStartRisk(riskSpade, spade);
 
-        calculateNonTrumpStartRisk(riskDiamon, diamond);
-        calculateNonTrumpStartRisk(riskDiamon, heart);
-        calculateNonTrumpStartRisk(riskDiamon, club);
-        calculateNonTrumpStartRisk(riskDiamon, spade);
+        riskDiamon = calculateNonTrumpStartRisk(riskDiamon, diamond);
+        riskHeart = calculateNonTrumpStartRisk(riskHeart, heart);
+        riskClub = calculateNonTrumpStartRisk(riskClub, club);
+        riskSpade = calculateNonTrumpStartRisk(riskSpade, spade);
 
         HashMap<Double, List<Card>> risks = new HashMap<>();
         risks.put(riskDiamon,diamond);
@@ -167,49 +122,102 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
                 good = entry.getValue();
             }
         }
+        Random r = new Random();
         if(good.get(0).getColour().isTrump()){
             if(good.stream().anyMatch(card -> card.getName().equals("Jack"))){
                 bestCard = good.stream().filter(card -> card.getName().equals("Jack")).findFirst().get();
             }else {
-                bestCard = good.stream().min(Comparator.comparingDouble(Card::getValue)).get();
+                bestCard = good.get(r.nextInt(good.size()));
             }
         }else {
             if(good.stream().anyMatch(card -> card.getName().equals("Ace"))){
                 bestCard = good.stream().filter(card -> card.getName().equals("Ace")).findFirst().get();
             }else {
-                bestCard = good.stream().min(Comparator.comparingDouble(Card::getValue)).get();
+                bestCard = good.get(r.nextInt(good.size()));
             }
         }
-
         return bestCard;
     }
 
-    private void calculateNonTrumpStartRisk(double baseRisk, List<Card> cards){
+    private Card findUber(List<Card> cards){
+        boolean needUber = true;
+        boolean sliced = false;
+        Card firstCard = cards.get(0);
+        Card uber = firstCard;
+        Colour colour = firstCard.getColour();
+        for(Card card : cards){
+            if(!card.getColour().isTrump() && !card.getColour().equals(colour))
+                continue;
+            if(card.getColour().isTrump()){
+                if(card.getColour().equals(colour)){
+                    Card finalUber2 = uber;
+                    if(finalUber2 == null){
+                    }else {
+                        if (trumps.stream().noneMatch(trump -> trump.getValue()>= finalUber2.getValue())){
+                            needUber=false;
+                        }
+                    }
+                }else {
+                    sliced = true;
+                    if(possibleCards.size()>0){
+                        needUber=false;
+                    }
+                }
+
+            }
+            if(sliced && needUber){
+                uber = card;
+            }
+            if(needUber){
+                if(uber.getValue()<=card.getValue()) uber = card;
+                if(possibleCards.size()>0) {
+                    Card finalUber1 = uber;
+                    if(possibleCards.stream().noneMatch(myCard -> myCard.getValue()>= finalUber1.getValue()))
+                        needUber = false;
+                }
+            }
+            if(!needUber){
+                uber = null;
+            }
+
+        }
+        return uber;
+    }
+    private double calculateNonTrumpStartRisk(double baseRisk, List<Card> cards){
 
         if(cards.size()==0){
-            return;
+            return baseRisk;
         }
         if(cards.get(0).getColour().isTrump()){
-            return;
+            return baseRisk;
         }else {
             if(cards.stream().anyMatch(card -> card.getName().equals("Ace"))){
-                baseRisk *= 0.7d;
+                if(cards.size()>5){
+                    return baseRisk = 1;
+                }else if(cards.size()>3){
+                    return baseRisk = 0.5;
+                }else {
+                    return baseRisk *= 0.5d;
+                }
+
             }
         }
+        return baseRisk;
     }
 
-    private void calculateTrumpStartRisk(double baseRisk, List<Card> trumps){
+    private double calculateTrumpStartRisk(double baseRisk, List<Card> trumps){
         if(trumps.size()==0){
-            return;
+            return baseRisk;
         }
         if(trumps.get(0).getColour().isTrump()){
             if(trumps.stream().anyMatch(card -> card.getName().equals("Jack"))){
                 baseRisk *= 0.5d;
                 if(trumps.stream().anyMatch(card -> card.getName().equals("Nine"))){
-                    baseRisk *= 0.7d;
+                    return baseRisk *= 0.7d;
                 }
             }
         }
+        return baseRisk;
     }
 
 }

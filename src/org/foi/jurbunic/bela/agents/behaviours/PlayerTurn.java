@@ -2,7 +2,6 @@ package org.foi.jurbunic.bela.agents.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import org.foi.jurbunic.bela.Game;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.*;
@@ -40,9 +39,7 @@ public class PlayerTurn extends Behaviour {
         switch (player.getStatus()){
             //Waiting for turn
             case 0:
-
-                    sleep();
-
+                sleep();
                 break;
             //I call trump
             case 1:
@@ -59,13 +56,12 @@ public class PlayerTurn extends Behaviour {
                     player.setStatus(3);
                     return;
                 }
-
                 hand = game.getHand();
                 algorithm = new NextCardAlgoritm(player.getMyCards());
                 algorithm.setCars(hand.getCardsInPlay());
                 Card card = algorithm.bestAction();
                 game.playInHand(player, card);
-                String out = hand.getHandNumber()+".   ["+player.getPlayerId()+"] Odigrao sam: "+card.getCardGraphic();
+                String out = "["+player.getPlayerId()+"] Odigrao sam: "+card.getCardGraphic();
                 if(card.getColour().isTrump()){
                     out += " (A)";
                 }
@@ -88,12 +84,9 @@ public class PlayerTurn extends Behaviour {
                     sleep();
                 }
                 break;
-                /*
             case 4:
-                if(player.isAlive()){
-                    player.doDelete();
-                }
-                */
+                //game over
+                break;
             default:
                 player.setStatus(0);
         }

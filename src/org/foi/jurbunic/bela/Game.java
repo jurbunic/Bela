@@ -37,18 +37,13 @@ public class Game implements Serializable{
         deck.splitEvenly(players.size());
         deck.shuffle();
         for(int i=0;i<players.size();i++){
-            try{
-                if(players.get(i).getHands().size()>0){
-                    players.get(i).getHands().clear();
-                }
-                players.get(i).setMyCards(deck.deal());
-                if(playerOnTurn==i)
-                    players.get(i).setStatus(2);
-                else players.get(i).setStatus(0);
-            }catch (Exception e){
-                System.out.println("Debug");
+            if(players.get(i).getHands().size()>0){
+                players.get(i).getHands().clear();
             }
-
+            players.get(i).setMyCards(deck.deal());
+            if(playerOnTurn==i)
+                players.get(i).setStatus(2);
+            else players.get(i).setStatus(0);
         }
     }
 
@@ -106,10 +101,11 @@ public class Game implements Serializable{
                 team.calculateWinner();
                 System.out.print("New round? (y/n) >");
                 Scanner scanner = new Scanner(System.in);
-                String input = scanner.next();
+                String input = "y";
                 if (input.equals("y")) {
                     playerOnTurn++;
                     dealCards();
+                    sleep();
                     playersWaitList.clear();
                     break;
                 }
@@ -126,6 +122,14 @@ public class Game implements Serializable{
                     break;
                 }
             }
+        }
+    }
+
+    private void sleep(){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

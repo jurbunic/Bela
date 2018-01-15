@@ -1,10 +1,8 @@
 package org.foi.jurbunic.bela.agents;
 
-import jade.content.onto.annotations.SuppressSlot;
 import jade.core.Agent;
-import jade.wrapper.StaleProxyException;
 import org.foi.jurbunic.bela.agents.behaviours.PlayerTurn;
-import org.foi.jurbunic.bela.agents.behaviours.Register;
+import org.foi.jurbunic.bela.agents.behaviours.Registration;
 import org.foi.jurbunic.bela.cards.Card;
 import org.foi.jurbunic.bela.cards.Hand;
 
@@ -27,15 +25,8 @@ public class Player extends Agent {
         playerId =  (Integer) this.getArguments()[0];
         System.out.println("["+playerId+"]"+"My name is " + getName());
         sleep();
-        addBehaviour(new Register(this));
+        addBehaviour(new Registration(this));
         addBehaviour(new PlayerTurn(this));
-    }
-
-    public void listMyCards(){
-        System.out.println("My cards:");
-        for(Card card : myCards){
-            System.out.println(card.getName() + " " +card.getColourName());
-        }
     }
 
     public void setMyCards(List<Card> cards){
@@ -70,7 +61,6 @@ public class Player extends Agent {
         return hands;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void takeDown() {
         System.out.println("Umirem" + getAID().getName());
