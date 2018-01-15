@@ -14,17 +14,29 @@ public class Hand implements Serializable {
     private boolean winnerDecided = false;
     private int winnerId;
     private HashMap<Player,Card> cardsInPlay = new HashMap<>();
+    private boolean last=false;
 
     public Hand(){
     }
 
+    public Hand(Hand hand){
+        this.cardsInPlay = hand.cardsInPlay;
+        this.winnerId = hand.winnerId;
+        this.winnerDecided = hand.winnerDecided;
+        this.last = hand.last;
+    }
+
     public void addCard(Player player, Card card){
         winnerDecided = false;
+        last = false;
         cardsInPlay.put(player, card);
         if(cardsInPlay.size()==4){
             decideWinner();
             cardsInPlay = new HashMap<>();
             handNumber++;
+            if(handNumber>8){
+                handNumber=1;
+            }
         }
     }
 
@@ -58,7 +70,10 @@ public class Hand implements Serializable {
                 }
             }
         }
-        winner.addHand(this);
+        if(handNumber==8){
+            last = true;
+        }
+        winner.addHand(new Hand(this));
         winnerDecided = true;
         winnerId = winner.getPlayerId();
     }
@@ -81,5 +96,14 @@ public class Hand implements Serializable {
 
     public int getHandNumber() {
         return handNumber;
+    }
+
+    public int getHandValue(){
+        Integer value = 0;
+        for(Map.Entry<Player, Card> entry : cardsInPlay.entrySet()){
+            value += (int) entry.getValue().getValue();
+        }
+        if(last) value+=10;
+        return value;
     }
 }

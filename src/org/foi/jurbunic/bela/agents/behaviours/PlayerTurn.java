@@ -49,8 +49,8 @@ public class PlayerTurn extends Behaviour {
                 algorithm = new TrumpAlgorithm(player.getMyCards());
                 Colour colour = algorithm.bestAction().getColour();
                 colour.setTrump(true);
-                game.setTrump(colour);
-                System.out.println("Zovem: "+colour.getColourName());
+                game.setTrump(player,colour);
+                System.out.println("["+player.getPlayerId()+"] Trump is: "+colour.getColourName());
                 player.setStatus(2);
                 break;
             //My turn

@@ -15,6 +15,7 @@ public class Game implements Serializable{
     private static Game INSTANCE;
     private static Deck deck;
     private Hand hand = new Hand();
+    private Team team;
 
     private static Integer playerOnTurn = 0;
 
@@ -22,6 +23,7 @@ public class Game implements Serializable{
 
     private Game() {
         deck = new BelaDeck();
+        team = new Team();
     }
 
     public static Game getInstance() {
@@ -36,6 +38,9 @@ public class Game implements Serializable{
         deck.shuffle();
         for(int i=0;i<players.size();i++){
             try{
+                if(players.get(i).getHands().size()>0){
+                    players.get(i).getHands().clear();
+                }
                 players.get(i).setMyCards(deck.deal());
                 if(playerOnTurn==i)
                     players.get(i).setStatus(2);
@@ -52,6 +57,7 @@ public class Game implements Serializable{
         int playerSize = players.size();
         if(players.size()>=4){
             dealCards();
+            team.fillTeams(players);
             players.get(0).setStatus(1);
         }
     }
@@ -60,7 +66,8 @@ public class Game implements Serializable{
         return trump;
     }
 
-    public void setTrump(Colour trump){
+    public void setTrump(Player player,Colour trump){
+        team.playerCalled(player);
         Game.trump = trump;
     }
 
@@ -96,6 +103,7 @@ public class Game implements Serializable{
         playersWaitList.add(p);
         if(playersWaitList.size()==4){
             while (true) {
+                team.calculateWinner();
                 System.out.print("New round? (y/n) >");
                 Scanner scanner = new Scanner(System.in);
                 String input = scanner.next();
