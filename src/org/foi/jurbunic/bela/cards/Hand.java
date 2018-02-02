@@ -73,7 +73,6 @@ public class Hand implements Serializable {
         if(handNumber==8){
             last = true;
         }
-        winner.addHand(new Hand(this));
         winnerDecided = true;
         winnerId = winner.getPlayerId();
     }

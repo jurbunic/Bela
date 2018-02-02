@@ -38,9 +38,6 @@ public class Game implements Serializable{
         deck.splitEvenly(players.size());
         deck.shuffle();
         for(int i=0;i<players.size();i++){
-            if(players.get(i).getHands().size()>0){
-                players.get(i).getHands().clear();
-            }
             players.get(i).setMyCards(deck.deal());
             if(playerOnTurn==i)
                 players.get(i).setStatus(2);
