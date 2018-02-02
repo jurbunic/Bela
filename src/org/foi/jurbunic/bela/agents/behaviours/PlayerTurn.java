@@ -14,7 +14,6 @@ public class PlayerTurn extends Behaviour {
     private int firstStart = 0;
     private Hand hand = new Hand();
 
-    private static int numOfCardsOnTable = 0;
 
     public PlayerTurn(Agent a) {
         super(a);
@@ -47,7 +46,7 @@ public class PlayerTurn extends Behaviour {
                 Colour colour = algorithm.bestAction().getColour();
                 colour.setTrump(true);
                 game.setTrump(player,colour);
-                System.out.println("["+player.getPlayerId()+"] Trump is: "+colour.getColourName());
+                System.out.println("["+player.getPlayerId()+"] Adut je: "+colour.getColourName());
                 player.setStatus(2);
                 break;
             //My turn

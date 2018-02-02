@@ -17,6 +17,7 @@ public class Hand implements Serializable {
     private boolean last=false;
 
     public Hand(){
+        cardsInPlay = new HashMap<>();
     }
 
     public Hand(Hand hand){
@@ -32,7 +33,6 @@ public class Hand implements Serializable {
         cardsInPlay.put(player, card);
         if(cardsInPlay.size()==4){
             decideWinner();
-            cardsInPlay = new HashMap<>();
             handNumber++;
             if(handNumber>8){
                 handNumber=1;

@@ -12,18 +12,19 @@ public class Game implements Serializable{
 
     private static List<Player> players = new ArrayList<>();
     private List<Player> playersWaitList = new ArrayList<>();
+    private List<Team> teams= new ArrayList<>();
+    private static Player playerCalled;
     private static Game INSTANCE;
     private static Deck deck;
     private Hand hand = new Hand();
-    private Team team;
 
     private static Integer playerOnTurn = 0;
 
     private static Colour trump;
 
     private Game() {
+        for(int i=0; i < 2; i++) teams.add(new Team());
         deck = new BelaDeck();
-        team = new Team();
     }
 
     public static Game getInstance() {
@@ -50,9 +51,10 @@ public class Game implements Serializable{
     public void registerPlayer(Player player){
         players.add(player);
         int playerSize = players.size();
+        teams.get(playerSize%2).addPlayer(player);
+        player.setPlayerTeam(playerSize%2);
         if(players.size()>=4){
             dealCards();
-            team.fillTeams(players);
             players.get(0).setStatus(1);
         }
     }
@@ -62,7 +64,7 @@ public class Game implements Serializable{
     }
 
     public void setTrump(Player player,Colour trump){
-        team.playerCalled(player);
+        Game.playerCalled = player;
         Game.trump = trump;
     }
 
@@ -76,6 +78,7 @@ public class Game implements Serializable{
             for(Player player : players){
                 if( player.getPlayerId() == hand.getWinnerId()){
                     System.out.println("Winner: ["+player.getPlayerId()+"]");
+                    teams.get(player.getPlayerTeam()).collectHand(new Hand(hand));
                     player.setStatus(2);
                     hand = new Hand();
                     return;
@@ -98,10 +101,10 @@ public class Game implements Serializable{
         playersWaitList.add(p);
         if(playersWaitList.size()==4){
             while (true) {
-                team.calculateWinner();
+                calculateWinner();
                 System.out.print("New round? (y/n) >");
                 Scanner scanner = new Scanner(System.in);
-                String input = "y";
+                String input = scanner.next();
                 if (input.equals("y")) {
                     playerOnTurn++;
                     dealCards();
@@ -130,6 +133,27 @@ public class Game implements Serializable{
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void calculateWinner(){
+        Integer team1Score = teams.get(0).calculateScore();
+        Integer team2Score = teams.get(1).calculateScore();
+
+        System.out.println("Team 1: result -> " + team1Score);
+        System.out.println("Team 2: result -> " + team2Score);
+        if(teams.get(0).playerExists(playerCalled.getPlayerId())){
+            if(team1Score<=team2Score){
+                System.out.println("Winner: Team 2 (Team 1 falls)");
+            }else {
+                System.out.println("Winner: Team 1 (Team 1 pass)");
+            }
+        }else {
+            if(team2Score<=team1Score){
+                System.out.println("Winner: Team 1 (Team 2 falls)");
+            }else {
+                System.out.println("Winner: Team 2 (Team 2 pass)");
+            }
         }
     }
 }

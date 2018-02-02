@@ -13,6 +13,7 @@ public class Player extends Agent {
 
     private Integer status = 0;
     private Integer playerId;
+    private Integer playerTeam;
     private List<Card> myCards = new ArrayList<>();
     private List<Hand> hands = new ArrayList<>();
 
@@ -57,8 +58,16 @@ public class Player extends Agent {
         hands.add(hand);
     }
 
+    public Integer getPlayerTeam() {
+        return playerTeam;
+    }
+
     public List<Hand> getHands() {
         return hands;
+    }
+
+    public void setPlayerTeam(Integer playerTeam) {
+        this.playerTeam = playerTeam;
     }
 
     @Override
