@@ -1,17 +1,16 @@
 package org.foi.jurbunic.bela.cards;
 
+import org.foi.jurbunic.bela.CommonKnowledge;
 import org.foi.jurbunic.bela.Game;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
+public class NextCardAlgoritm extends CardOperation {
 
-    private boolean canTakeHand;
-    private int chanceOfTaking;
-
-    List<Card> possibleCards = null;
-    List<Card> trumps = null;
+    private CommonKnowledge knowledge = CommonKnowledge.getInstance();
+    private List<Card> possibleCards = null;
+    private List<Card> trumps = null;
 
     private List<Card> cardsOnTable;
     private Game game = Game.getInstance();
@@ -28,10 +27,6 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
     @Override
     public Card bestAction() {
         trumps = filterByColour(game.getTrumpColour().getColourId());
-        Card bestCard = nextCardLogic(cardsOnTable);
-        if(bestCard == null){
-            System.out.println("Debug");
-        }
         return nextCardLogic(cardsOnTable);
     }
 
@@ -85,10 +80,11 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
     private Card choseCard(){
         Card bestCard;
         splitCardsByColour(myCards);
-        double riskDiamon = diamond.size() / 8d;
-        double riskHeart = heart.size() / 8d;
-        double riskClub = club.size() / 8d;
-        double riskSpade = spade.size() / 8d;
+        double devider = knowledge.getMaxCards()/4d;
+        double riskDiamon = diamond.size() / devider;
+        double riskHeart = heart.size() / devider;
+        double riskClub = club.size() / devider;
+        double riskSpade = spade.size() / devider;
 
         riskDiamon = calculateTrumpStartRisk(riskDiamon, diamond);
         riskHeart = calculateTrumpStartRisk(riskHeart, heart);
@@ -192,17 +188,26 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
             return baseRisk;
         }else {
             if(cards.stream().anyMatch(card -> card.getName().equals("Ace"))){
-                if(cards.size()>5){
-                    return baseRisk = 1;
-                }else if(cards.size()>3){
-                    return baseRisk = 0.5;
-                }else {
-                    return baseRisk *= 0.5d;
-                }
-
+                return baseRisk = getRiskBasedOnSize(cards, baseRisk);
             }
+            if(knowledge.isAceOut(cards.get(0).getColour())){
+                if(cards.stream().anyMatch(card -> card.getName().equals("Ten"))){
+                    baseRisk *= 0.4;
+                }
+            }
+
         }
         return baseRisk;
+    }
+
+    private double getRiskBasedOnSize(List<Card> cards, double baseRisk){
+        if(cards.size()>5){
+            return baseRisk = 1;
+        }else if(cards.size()>3){
+            return baseRisk = 0.5;
+        }else {
+            return baseRisk *= 0.5d;
+        }
     }
 
     private double calculateTrumpStartRisk(double baseRisk, List<Card> trumps){
@@ -211,10 +216,21 @@ public class NextCardAlgoritm extends CardOperation implements CardAlgorithm {
         }
         if(trumps.get(0).getColour().isTrump()){
             if(trumps.stream().anyMatch(card -> card.getName().equals("Jack"))){
-                baseRisk *= 0.5d;
+                baseRisk = 0.0001d;
                 if(trumps.stream().anyMatch(card -> card.getName().equals("Nine"))){
-                    return baseRisk *= 0.7d;
+                    return baseRisk *= 0.9d;
                 }
+            }
+            else if(knowledge.isJackTrumpOut()){
+                if(trumps.stream().anyMatch(card -> card.getName().equals("Nine"))) return baseRisk *= 0.7d;
+                if(knowledge.isNineTrumpOut()){
+                    if(trumps.stream().anyMatch(card -> card.getName().equals("Ace"))){
+                        return baseRisk *= 0.7d;
+                    }
+                }
+            }
+            else if(!knowledge.isJackTrumpOut()){
+                return baseRisk = 1;
             }
         }
         return baseRisk;

@@ -2,18 +2,25 @@ package org.foi.jurbunic.bela.agents.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
+import org.foi.jurbunic.bela.CommonKnowledge;
 import org.foi.jurbunic.bela.Game;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.*;
 
+import java.io.IOException;
+import java.io.Serializable;
 
-public class PlayerTurn extends Behaviour {
+
+public class PlayerTurn extends Behaviour implements Serializable {
 
     private Player player;
     private Game game = Game.getInstance();
     private int firstStart = 0;
     private Hand hand = new Hand();
-
+    private ACLMessage aclMessage;
+    private CommonKnowledge knowledge = CommonKnowledge.getInstance();
 
     public PlayerTurn(Agent a) {
         super(a);
@@ -34,11 +41,26 @@ public class PlayerTurn extends Behaviour {
             printMyCards();
             firstStart++;
         }
-        CardAlgorithm algorithm = null;
+        CardOperation algorithm = null;
         switch (player.getStatus()){
             //Waiting for turn
             case 0:
                 sleep();
+                /*
+                aclMessage = player.receive();
+                if(aclMessage != null){
+                    try {
+                        hand = (Hand) aclMessage.getContentObject();
+                        if(hand.isWinnerDecided()){
+                            game.collectHand(hand);
+                        }else {
+                            player.setStatus(2);
+                        }
+                    } catch (UnreadableException e) {
+                        e.printStackTrace();
+                    }
+                }
+                */
                 break;
             //I call trump
             case 1:
@@ -55,6 +77,7 @@ public class PlayerTurn extends Behaviour {
                     player.setStatus(3);
                     return;
                 }
+
                 hand = game.getHand();
                 algorithm = new NextCardAlgoritm(player.getMyCards());
                 algorithm.setCars(hand.getCardsInPlay());
@@ -65,12 +88,24 @@ public class PlayerTurn extends Behaviour {
                     out += " (A)";
                 }
                 System.out.println(out);
+                knowledge.testCard(card);
                 player.getMyCards().remove(card);
                 player.setStatus(0);
                 game.setNextPlayer(player.getPlayerId());
+                /*
+                ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+                message.addReceiver(game.getNextPlayer(player.getPlayerId()));
+                try {
+                    message.setContentObject(hand);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                player.send(message);
+                */
                 if(player.getMyCards().size()==0){
                     player.setStatus(3);
                 }
+
                 sleep();
                 break;
             // Wait for player decision
@@ -108,7 +143,7 @@ public class PlayerTurn extends Behaviour {
 
     private void sleep(){
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             System.out.println("Prekid cekanja!");
             player.doDelete();

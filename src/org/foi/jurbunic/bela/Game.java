@@ -1,5 +1,6 @@
 package org.foi.jurbunic.bela;
 
+import jade.core.AID;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.*;
 
@@ -16,6 +17,7 @@ public class Game implements Serializable{
     private static Player playerCalled;
     private static Game INSTANCE;
     private static Deck deck;
+    private CommonKnowledge knowledge = CommonKnowledge.getInstance();
     private Hand hand = new Hand();
 
     private static Integer playerOnTurn = 0;
@@ -35,12 +37,12 @@ public class Game implements Serializable{
     }
 
     private void dealCards(){
-        deck.splitEvenly(players.size());
         deck.shuffle();
+        deck.splitEvenly(players.size());
         for(int i=0;i<players.size();i++){
             players.get(i).setMyCards(deck.deal());
             if(playerOnTurn==i)
-                players.get(i).setStatus(2);
+                players.get(i).setStatus(1);
             else players.get(i).setStatus(0);
         }
     }
@@ -65,6 +67,14 @@ public class Game implements Serializable{
         Game.trump = trump;
     }
 
+    public AID getNextPlayer(Integer current){
+        Integer nextPlayer;
+        current++;
+        if(current>3) current=0;
+        nextPlayer = current;
+        return players.get(nextPlayer).getAID();
+    }
+
 
     public void setNextPlayer(Integer myId){
         Integer nextPlayer = myId+1;
@@ -72,15 +82,7 @@ public class Game implements Serializable{
             nextPlayer = 0;
         }
         if(hand.isWinnerDecided()){
-            for(Player player : players){
-                if( player.getPlayerId() == hand.getWinnerId()){
-                    System.out.println("Winner: ["+player.getPlayerId()+"]");
-                    teams.get(player.getPlayerTeam()).collectHand(new Hand(hand));
-                    player.setStatus(2);
-                    hand = new Hand();
-                    return;
-                }
-            }
+            collectHand(hand);
         }
         players.get(nextPlayer).setStatus(2);
     }
@@ -125,6 +127,18 @@ public class Game implements Serializable{
         }
     }
 
+    public void collectHand(Hand hand){
+        for(Player player : players){
+            if( player.getPlayerId() == hand.getWinnerId()){
+                System.out.println("Winner: ["+player.getPlayerId()+"]");
+                teams.get(player.getPlayerTeam()).collectHand(new Hand(hand));
+                player.setStatus(2);
+                this.hand = new Hand();
+                return;
+            }
+        }
+    }
+
     private void sleep(){
         try {
             Thread.sleep(500);
@@ -134,9 +148,9 @@ public class Game implements Serializable{
     }
 
     private void calculateWinner(){
+        knowledge.reset();
         Integer team1Score = teams.get(0).calculateScore();
         Integer team2Score = teams.get(1).calculateScore();
-
         System.out.println("Team 1: result -> " + team1Score);
         System.out.println("Team 2: result -> " + team2Score);
         if(teams.get(0).playerExists(playerCalled.getPlayerId())){

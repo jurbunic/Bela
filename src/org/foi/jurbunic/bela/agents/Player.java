@@ -5,10 +5,11 @@ import org.foi.jurbunic.bela.agents.behaviours.PlayerTurn;
 import org.foi.jurbunic.bela.agents.behaviours.Registration;
 import org.foi.jurbunic.bela.cards.Card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player extends Agent {
+public class Player extends Agent implements Serializable {
 
     private Integer status = 0;
     private Integer playerId;

@@ -4,7 +4,7 @@ package org.foi.jurbunic.bela.cards;
 
 import java.util.List;
 
-public class TrumpAlgorithm extends CardOperation implements CardAlgorithm{
+public class TrumpAlgorithm extends CardOperation {
 
     public TrumpAlgorithm(List<Card> myCards) {
         this.myCards = myCards;

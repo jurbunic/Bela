@@ -3,10 +3,11 @@ package org.foi.jurbunic.bela;
 import org.foi.jurbunic.bela.agents.Player;
 import org.foi.jurbunic.bela.cards.Hand;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Team {
+public class Team implements Serializable{
 
     private List<Hand> teamHands = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
